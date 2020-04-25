@@ -1,5 +1,15 @@
 venv
 .idea
 __pycache__
-Output Files\*.*
-Input Files\*.*
+
+
+#Exclude everything
+Output Files/*
+#Exception to the rule
+!Output Files/.gitkeep
+
+#Exclude everything
+Input Files/
+#Exception to the rule
+!Input Files/.gitkeep
+
