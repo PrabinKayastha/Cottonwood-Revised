@@ -1,3 +1,5 @@
-venv/
+venv
 .idea
 __pycache__
+Output Files\*.*
+Input Files\*.*
