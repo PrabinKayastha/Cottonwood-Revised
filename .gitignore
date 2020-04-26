@@ -7,6 +7,8 @@ __pycache__
 Output Files/*
 #Exception to the rule
 !Output Files/.gitkeep
+!Output Files/Topo Adjusted Files/.gitkeep
+
 
 #Exclude everything
 Input Files/
