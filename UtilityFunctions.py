@@ -92,10 +92,11 @@ def create_adjusted_topos(_datafiles_location):
             data_file_objects_dict[data_file_location] = create_asc_data_obj(data_file_location)
 
         for data_file_location, data_file_object in data_file_objects_dict.items():
-            adjusted_output_location = "./Output Files/adj_" + data_file_location[data_file_location.rfind("\\") + 1:]
-            write_asc_data_file(data_file_object.topo_adjusted_data, adjusted_output_location)
+            adjusted_output_location = "./Output Files/Topo Adjusted Files/adj_" + data_file_location[data_file_location.rfind("\\") + 1:]
+            write_asc_data_file(data_file_object.adjust_with_topo(), adjusted_output_location)
 
         print("The adjusted output can be found at 'Output Files' in the project root folder.")
     else:
         print("WARNING ::: No asc files found!!!!!")
     return data_file_objects_dict
+

@@ -51,7 +51,6 @@ class AscData:
             """Data content of the file."""
             self.sensor_data = list(lines)
 
-    @staticmethod
     def adjust_with_topo(self):
         adjusted_data = []
         for i in range(int(self.file_metadata["nrows"])):
@@ -73,4 +72,4 @@ if __name__ == "__main__":
     print(ascdata1.topo_file_metadata)
     # ascdata2 = AscData(r"F:\Projects and GIT Repositories\PrabinKayastha\Cottonwood Revised\Input Files\wd_day2.asc")
     # print(id(ascdata1.topo_data) == id(ascdata2.topo_data))
-    print(ascdata1.adjust_with_topo(ascdata1))
+    print(ascdata1.adjust_with_topo())
