@@ -73,7 +73,7 @@ def write_asc_data_file(asc_data, output_file_path):
         writer.writerows(asc_data)
 
 
-def export_topo_adjusted_data(data_file_path):
+def export_topo_adjusted_data(data_file_objects_lookup):
     """
     Returns a dictionary of .asc filename and its corresponding AscData type object.
     Adjusts the data values in object of type AscData class with the topo.asc data and
@@ -83,8 +83,8 @@ def export_topo_adjusted_data(data_file_path):
     """
     data_file_objects_dict = {}
 
-    for data_file_location, data_file_object in data_file_objects_dict.items():
-        adjusted_output_location = "./Output Files/Topo Adjusted Files/adj_" + data_file_location[data_file_location.rfind("\\") + 1:]
+    for data_file_name, data_file_object in data_file_objects_lookup.items():
+        adjusted_output_location = "./Output Files/Topo Adjusted Files/adj_" + data_file_name
         write_asc_data_file(data_file_object.adjust_with_topo(), adjusted_output_location)
 
     print("The adjusted output can be found at './Output Files/Topo Adjusted Files/' in the project root folder.")

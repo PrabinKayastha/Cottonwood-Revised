@@ -5,6 +5,7 @@ from pprint import pprint
 all_asc_files = []
 data_file_location_lookup = {}  # stores datafile names and its file location
 data_file_objects_lookup = {}  # lookup of AscData class objects of all input data files
+data_file_analysis_details = {}
 
 while True:
     print(Fore.RED + "Hit 'Enter' to quit." + Fore.RESET)
@@ -24,8 +25,9 @@ while True:
             # Maintain lookup for filename and AscData objects
             data_file_objects_lookup = {extract_filename_from_filepath(file_path): create_asc_data_obj(file_path)
                                         for file_path in all_data_file_paths}
+            pprint(data_file_objects_lookup)
 
-            asc_data_objects = export_topo_adjusted_data(all_data_file_paths)
+            asc_data_objects = export_topo_adjusted_data(data_file_objects_lookup)
         else:
             print("WARNING ::: No asc data files found!!!!!")
     else:
