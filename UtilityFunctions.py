@@ -2,7 +2,7 @@ import os
 from itertools import tee, islice
 import csv
 import numpy
-from pip._vendor.colorama import Fore
+from colorama import Fore
 
 from AscData import AscData
 
@@ -19,23 +19,20 @@ def print_banner(message, border="*"):
     print(line + "\n" + Fore.RESET)
 
 
-def get_list_of_asc_input_files():
+def get_list_of_asc_input_files(path):
     """
     Prompts for user input of a file location.
     Returns for an array containing the file locations and a dictionary for the data file name with its location for
     given user input of a file location.
     return: list of all files location.
     """
-    all_files = []
-    print(Fore.RED + "Hit 'Enter' to quit." + Fore.RESET)
+    all_asc_files = []
 
-    path = input(Fore.YELLOW + "Input the folder locations if any ::: " + Fore.RESET)
-    if path:
-        for r, d, f in os.walk(path):  # r=root, d=directory F=file
-            for file in f:
-                if ".asc" in file:
-                    all_files.append(os.path.join(r, file))
-    return all_files
+    for r, d, f in os.walk(path):  # r=root, d=directory F=file
+        for file in f:
+            if ".asc" in file:
+                all_asc_files.append(os.path.join(r, file))
+    return all_asc_files
 
 
 def extract_filename_from_filepath(file_path):
