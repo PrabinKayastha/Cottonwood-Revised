@@ -19,7 +19,7 @@ def print_banner(message, border="*"):
     print(line + "\n" + Fore.RESET)
 
 
-def get_list_of_asc_input_files(path):
+def get_list_of_asc_input_file_paths(path):
     """
     Prompts for user input of a file location.
     Returns for an array containing the file locations and a dictionary for the data file name with its location for
@@ -73,7 +73,7 @@ def write_asc_data_file(asc_data, output_file_path):
         writer.writerows(asc_data)
 
 
-def create_adjusted_topos(_datafiles_location):
+def create_topo_adjusted_data(data_file_path):
     """
     Returns a dictionary of .asc filename and its corresponding AscData type object.
     Adjusts the data values in object of type AscData class with the topo.asc data and
@@ -82,11 +82,12 @@ def create_adjusted_topos(_datafiles_location):
     return: Dictionary of .asc filename and its corresponding AscData type object.
     """
     data_file_objects_dict = {}
-    if _datafiles_location:
-        print(str(len(_datafiles_location)) + " data files found!!!")
+    if data_file_path:
+        print(str(len(data_file_path)) + " data files found!!!")
 
-        for data_file_location in _datafiles_location.values():
-            data_file_objects_dict[data_file_location] = create_asc_data_obj(data_file_location)
+        for data_file_location in data_file_path:
+            data_file_objects_dict[extract_filename_from_filepath(data_file_location)] = \
+                create_asc_data_obj(data_file_location)
 
         for data_file_location, data_file_object in data_file_objects_dict.items():
             adjusted_output_location = "./Output Files/Topo Adjusted Files/adj_" + data_file_location[data_file_location.rfind("\\") + 1:]
