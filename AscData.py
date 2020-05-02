@@ -66,10 +66,10 @@ class AscData:
 
 
 if __name__ == "__main__":
-    ascdata1 = AscData(r"F:\Projects and GIT Repositories\PrabinKayastha\Cottonwood Revised\Input Files\wd_day1.asc")
+    ascdata1 = AscData(r"Input Files\wd_day1.asc")
     print(ascdata1.file_metadata)
     print(type(ascdata1.sensor_data[0][0]))
     print(ascdata1.topo_file_metadata)
-    # ascdata2 = AscData(r"F:\Projects and GIT Repositories\PrabinKayastha\Cottonwood Revised\Input Files\wd_day2.asc")
+    # ascdata2 = AscData(r"Input Files\wd_day2.asc")
     # print(id(ascdata1.topo_data) == id(ascdata2.topo_data))
     print(ascdata1.adjust_with_topo())
