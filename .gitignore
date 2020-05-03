@@ -3,12 +3,12 @@ venv
 __pycache__
 
 
-#Exclude everything
+# Exclude everything
 Output Files/*
-#Exception to the rule
+# Exception to the rule
 !Output Files/.gitkeep
 !Output Files/Topo Adjusted Files/.gitkeep
-
+!Output Files/Difference Results/.gitkeep
 
 #Exclude everything
 Input Files/
