@@ -76,10 +76,9 @@ def write_asc_data_file(asc_data, output_file_path):
 def bulk_fetch_topo_adjusted_data(data_file_objects_lookup):
     """
         Returns a dictionary of .asc filename and its corresponding AscData type object.
-        Adjusts the data values in object of type AscData class with the topo.asc data and
-        writes the file into a output file location.
-        param _datafiles_location: Root folder location for the input files.
-        return: Dictionary of .asc filename and its corresponding AscData type object.
+        Adjusts the data values in object of type AscData class with the topo.asc data.
+        param data_file_objects_lookup: Root folder location for the input files.
+        return: Dictionary of .asc filename and its corresponding topo adjusted data.
     """
     topo_adjusted_data_files_dict = {}
     for data_file, data_file_object in data_file_objects_lookup.items():
