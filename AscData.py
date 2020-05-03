@@ -57,9 +57,9 @@ class AscData:
             adj_col_vals = []
             for j in range(int(self.file_metadata["ncols"])):
                 if self.sensor_data[i][j] == self.file_metadata["NODATA_value"]:
-                    adj_col_vals.append(self.sensor_data[i][j] + AscData.topo_data[i][j])
+                    adj_col_vals.append(float(self.sensor_data[i][j]) + float(AscData.topo_data[i][j]))
                 else:
-                    adj_col_vals.append(self.sensor_data[i][j])
+                    adj_col_vals.append(float(self.sensor_data[i][j]))
             adjusted_data.append(adj_col_vals)
         # topo_adjusted_data = adjusted_data
         return adjusted_data
