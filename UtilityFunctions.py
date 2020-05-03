@@ -88,11 +88,8 @@ def bulk_fetch_topo_adjusted_data(data_file_objects_lookup):
 
 def export_topo_adjusted_data(topo_adjusted_data_lookup):
     """
-    Returns a dictionary of .asc filename and its corresponding AscData type object.
-    Adjusts the data values in object of type AscData class with the topo.asc data and
-    writes the file into a output file location.
-    param _datafiles_location: Root folder location for the input files.
-    return: Dictionary of .asc filename and its corresponding AscData type object.
+    Writes adjusted data into a output file location.
+    param topo_adjusted_data_lookup: lookup with the asc filename and its data.
     """
     for data_file_name, topo_adjusted_data in topo_adjusted_data_lookup.items():
         adjusted_output_location = "./Output Files/Topo Adjusted Files/adj_" + data_file_name
@@ -149,4 +146,37 @@ def calc_topo_adj_asc_running_avg(_data_file_objects, n=3):
 
         running_avgs_data["running_avg_iter" + str(window_id + 1)] = _running_avg_data[:]
     return running_avgs_data
+
+
+def calc_diff_asc_data(asc_minuend, asc_subtrahend):
+    """
+    Calculates the differences between two asc array data.
+    param _asc_minuend: 'a' in (a - b)
+    param _asc_subtrahend: 'b' in (a - b)
+    return: The difference of two asc arrays
+    """
+    difference = numpy.subtract(asc_minuend, asc_subtrahend)
+    return difference
+
+
+def calc_bulk_asc_data_difference(data_file_collection):
+    """
+    Calculates the consecutive difference for arrays passed. Here, (2nd item - 1st item), (3rd item - 2nd item)
+    and so on.
+    :param data_file_collection: array of arrays
+    :return: array of differences of arrays
+    """
+    diff_array_results = {}
+    for itr in range(len(data_file_collection) - 1):
+        message = "Calculating the difference for Day {} and Day {}".format(str(itr + 2), str(itr + 1))
+        print_banner(message)
+        diff_array_result = calc_diff_asc_data(data_file_collection['wd_day' + str(itr + 2) + '.asc'],
+                                               data_file_collection['wd_day' + str(itr + 1) + '.asc'])
+        diff_array_results['difference_day' + str(itr + 2) + '_minus_day' + str(itr + 1) + '_result'] = diff_array_result
+
+        output_location = '.\\Output Files\\Difference Results\\' \
+                          'difference_day' + str(itr + 2) + '_minus_day' + str(itr + 1) + '_result'
+        write_asc_data_file(diff_array_result, output_location)
+
+    return diff_array_results
 

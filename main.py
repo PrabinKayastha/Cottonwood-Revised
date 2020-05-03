@@ -30,9 +30,14 @@ while True:
 
             # Maintain lookup for filename and AscData objects
             topo_adjusted_data_lookup = bulk_fetch_topo_adjusted_data(data_file_objects_lookup)
-            # pprint(topo_adjusted_data_files_dict)
+            # pprint(topo_adjusted_data_lookup)
 
-            asc_data_objects = export_topo_adjusted_data(topo_adjusted_data_lookup)
+            # Export the adjusted data for future reference
+            export_topo_adjusted_data(topo_adjusted_data_lookup)
+
+            days_difference_lookup = calc_bulk_asc_data_difference(topo_adjusted_data_lookup)
+            pprint(days_difference_lookup.keys())
+
         else:
             print("WARNING ::: No asc data files found!!!!!")
     else:
