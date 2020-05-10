@@ -9,6 +9,7 @@ Output Files/*
 !Output Files/.gitkeep
 !Output Files/Topo Adjusted Files/.gitkeep
 !Output Files/Difference Results/.gitkeep
+!Output Files/Running Averages/.gitkeep
 
 #Exclude everything
 Input Files/

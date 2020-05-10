@@ -3,8 +3,10 @@ from itertools import tee, islice
 import csv
 import numpy
 from colorama import Fore
+import re
 
 from AscData import AscData
+from pprint import pprint
 
 
 def print_banner(message, border="*"):
@@ -97,57 +99,6 @@ def export_topo_adjusted_data(topo_adjusted_data_lookup):
     print("The adjusted output can be found at './Output Files/Topo Adjusted Files/' in the project root folder.")
 
 
-def init_iterable_objs_for_running_avg(_data_file_objects, n=3):
-    """
-    Initialize the running datasets of 'n' data files.
-    param _data_file_objects: Dictionary of .asc filename and its corresponding AscData type object.
-    param n: Size of the window. Default running window size is 3.
-    return: The zipped tuples of data sets for a given window size.
-    """
-    _data_file_objects_sorted_by_day = sorted(_data_file_objects.items(), key=lambda x: int(x[0][x[0].rfind("\\wd_day") + 7: x[0].rfind(".asc")]))
-    print(_data_file_objects_sorted_by_day)
-    _data_obj_dict_sorted = {}
-    for i in _data_file_objects_sorted_by_day:
-        _data_obj_dict_sorted[i[0]] = i[1]
-    iters = tee(_data_obj_dict_sorted.values(), n)
-    for i, it in enumerate(iters):
-        next(islice(it, i, i), None)
-    return zip(*iters)
-
-
-def calc_topo_adj_asc_running_avg(_data_file_objects, n=3):
-    """
-    Calculate the running average for 'n' datafiles and write them into output file location.
-    param _data_file_objects: Dictionary of .asc filename and its corresponding AscData type object.
-    param n: Window size for the running average. Default running window is 3.
-    return: running average of the data for each iterations in a dictionary.
-    """
-    obj_colls_list = init_iterable_objs_for_running_avg(_data_file_objects, n)
-    running_avgs_data = {}
-    for window_id, obj_coll in enumerate(obj_colls_list):
-        print(window_id, list(obj_coll), len(obj_coll))
-        _running_avg_data = []
-        for i in range(len(obj_coll[0].topo_adjusted_data)):
-            _running_avg_data_cols = []
-            for j in range(len(obj_coll[0].topo_adjusted_data[i])):
-                sum_data = 0
-                for obj_nth in range(n):
-                    sum_data += float(obj_coll[obj_nth].topo_adjusted_data[i][j])
-                running_avg_val = float(sum_data / n)
-                _running_avg_data_cols.append(running_avg_val)
-            _running_avg_data.append(_running_avg_data_cols)
-
-        avg_data_output_location = ".\\Output Files\\running_avg_iter" + str(window_id + 1)
-        print("\nRefer location : \"" + avg_data_output_location + "\" for the running averages of :")
-        for i in list(obj_coll):
-            print(list(_data_file_objects.keys())[list(_data_file_objects.values()).index(i)])
-
-        write_asc_data_file(_running_avg_data, avg_data_output_location)
-
-        running_avgs_data["running_avg_iter" + str(window_id + 1)] = _running_avg_data[:]
-    return running_avgs_data
-
-
 def calc_diff_asc_data(asc_minuend, asc_subtrahend):
     """
     Calculates the differences between two asc array data.
@@ -172,11 +123,74 @@ def calc_bulk_asc_data_difference(data_file_collection):
         print_banner(message)
         diff_array_result = calc_diff_asc_data(data_file_collection['wd_day' + str(itr + 2) + '.asc'],
                                                data_file_collection['wd_day' + str(itr + 1) + '.asc'])
-        diff_array_results['difference_day' + str(itr + 2) + '_minus_day' + str(itr + 1) + '_result'] = diff_array_result
+        diff_array_results['difference_day' + str(itr + 2) + '_minus_day' + str(itr + 1) + '_result' +
+                           str(itr + 1) + '.asc'] = diff_array_result
 
-        output_location = '.\\Output Files\\Difference Results\\' \
-                          'difference_day' + str(itr + 2) + '_minus_day' + str(itr + 1) + '_result'
+        output_location = '.\\Output Files\\Difference Results\\difference_day' + str(itr + 2) + \
+                          '_minus_day' + str(itr + 1) + '_result' + str(itr + 1) + '.asc'
         write_asc_data_file(diff_array_result, output_location)
 
     return diff_array_results
+
+
+def generate_tuples_for_running_average(asc_data_lookup, n=3):
+    """
+    Initialize the running datasets of 'n' data files.
+    param _data_file_objects: Dictionary of .asc filename and its corresponding AscData type object.
+    param n: Size of the window. Default running window size is 3.
+    return: The zipped tuples of data sets for a given window size.
+    """
+    sorted_asc_data_list = []
+    if re.match(r'\Adifference_day', list(asc_data_lookup.keys())[0]):
+        sorted_asc_data_list = sorted(asc_data_lookup.items(),
+                                      key=lambda x: int(x[0][x[0].rfind("_result") + 7: x[0].rfind(".asc")]))
+    elif re.match(r'\Awd_day', list(asc_data_lookup.keys())[0]):
+        sorted_asc_data_list = sorted(asc_data_lookup.items(),
+                                      key=lambda x: int(x[0][x[0].rfind("\\wd_day") + 7: x[0].rfind(".asc")]))
+    # print(sorted_asc_data_list)
+    _asc_data_dict_sorted = {}
+    for i in sorted_asc_data_list:
+        _asc_data_dict_sorted[i[0]] = i[1]
+
+    iters = tee(_asc_data_dict_sorted.values(), n)
+
+    for i, it in enumerate(iters):
+        next(islice(it, i, i), None)
+    return zip(*iters)
+
+
+def calc_topo_adj_asc_running_avg(asc_data_lookup, n=3):
+    """
+    Calculate the running average for 'n' datafiles and write them into output file location.
+    param _data_file_objects: Dictionary of .asc filename and its corresponding AscData type object.
+    param n: Window size for the running average. Default running window is 3.
+    return: running average of the data for each iterations in a dictionary.
+    """
+    obj_colls_list = generate_tuples_for_running_average(asc_data_lookup, n)
+    # pprint(obj_colls_list)
+    running_avgs_data = {}
+    for window_id, obj_coll in enumerate(obj_colls_list):
+        # print(window_id, list(obj_coll), len(obj_coll))
+        _running_avg_data = []
+        for i in range(len(obj_coll[0])):
+            _running_avg_data_cols = []
+            for j in range(len(obj_coll[0][i])):
+                sum_data = 0
+                for obj_nth in range(n):
+                    sum_data += float(obj_coll[obj_nth][i][j])
+                running_avg_val = float(sum_data / n)
+                _running_avg_data_cols.append(running_avg_val)
+            _running_avg_data.append(_running_avg_data_cols)
+
+        avg_data_output_location = ".\\Output Files\\Running Averages\\running_avg_iter" + str(window_id + 1) + ".asc"
+        print("\nRefer location : \"" + avg_data_output_location + "\" for the running averages.")
+        # for i in list(obj_coll):
+        #     print(list(asc_data_lookup.keys())[list(asc_data_lookup.values()).index(i)])
+        # pprint(asc_data_lookup)
+
+        write_asc_data_file(_running_avg_data, avg_data_output_location)
+
+        running_avgs_data["running_avg_iter" + str(window_id + 1)] = _running_avg_data[:]
+    return running_avgs_data
+
 
