@@ -38,6 +38,8 @@ while True:
             days_difference_lookup = calc_bulk_asc_data_difference(topo_adjusted_data_lookup)
             pprint(days_difference_lookup.keys())
 
+            running_averages = calc_topo_adj_asc_running_avg(days_difference_lookup)
+
         else:
             print("WARNING ::: No asc data files found!!!!!")
     else:
