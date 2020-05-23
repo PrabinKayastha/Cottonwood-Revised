@@ -22,8 +22,7 @@ while True:
                                          all_data_file_paths}
             # pprint(data_file_location_lookup)
 
-            # Maintain lookup for filenpython main
-            # ame and AscData objects
+            # Maintain lookup for file name and AscData objects
             data_file_objects_lookup = {extract_filename_from_filepath(file_path): create_asc_data_obj(file_path)
                                         for file_path in all_data_file_paths}
             # pprint(data_file_objects_lookup)
@@ -39,6 +38,10 @@ while True:
             pprint(days_difference_lookup.keys())
 
             running_averages = calc_topo_adj_asc_running_avg(days_difference_lookup)
+            pprint(running_averages.keys())
+
+            running_averages_categorized = categorize_data_values(running_averages)
+            pprint(running_averages_categorized.keys())
 
         else:
             print("WARNING ::: No asc data files found!!!!!")

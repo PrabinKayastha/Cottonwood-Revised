@@ -6,7 +6,7 @@ from colorama import Fore
 import re
 
 from AscData import AscData
-from pprint import pprint
+# from pprint import pprint
 
 
 def print_banner(message, border="*"):
@@ -194,3 +194,41 @@ def calc_topo_adj_asc_running_avg(asc_data_lookup, n=3):
     return running_avgs_data
 
 
+def get_categorize_sensor_values(two_Dim_sensor_data):
+    """
+    Returns the catagorized data values
+    param _two_Dim_sensor_data: 2d Numeric array
+    returns: catagorized data values as 2d array
+    """
+    categorized_data = []
+    for i in range(len(two_Dim_sensor_data)):
+        categorized_i_data = []
+        for j in range(len(two_Dim_sensor_data)):
+            if (two_Dim_sensor_data[i][j] >= -10000) and (two_Dim_sensor_data[i][j] <= -10):
+                categorized_i_data.append(3)
+            elif two_Dim_sensor_data[i][j] <= 50:
+                categorized_i_data.append(0)
+            elif two_Dim_sensor_data[i][j] <= 100:
+                categorized_i_data.append(1)
+            elif two_Dim_sensor_data[i][j] <= 10000:
+                categorized_i_data.append(3)
+            else:
+                categorized_i_data.append(None)
+        categorized_data.append(categorized_i_data)
+    return categorized_data
+
+
+def categorize_data_values(diff_array_results):
+    """
+    iterates through the available array of sensor datas and catagorizes the value
+    param diff_array_results: array of sensor array data
+    return: dictionary of categorized sensor array data
+    """
+    categorized_data_results = {}
+    for data_info, sensor_data in diff_array_results.items():
+        categorized_data = get_categorize_sensor_values(sensor_data)
+        categorized_data_results['categorized_' + data_info] = categorized_data
+
+        output_location = '.\\Output Files\\Catagorized Files\\categorized_' + data_info + '.asc'
+        write_asc_data_file(categorized_data, output_location)
+    return categorized_data_results
