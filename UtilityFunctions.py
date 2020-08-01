@@ -1,7 +1,8 @@
 import os
 from itertools import tee, islice
 import csv
-import numpy
+import json
+import numpy as np
 from colorama import Fore
 import re
 
@@ -106,7 +107,7 @@ def calc_diff_asc_data(asc_minuend, asc_subtrahend):
     param _asc_subtrahend: 'b' in (a - b)
     return: The difference of two asc arrays
     """
-    difference = numpy.subtract(asc_minuend, asc_subtrahend)
+    difference = np.subtract(asc_minuend, asc_subtrahend)
     return difference
 
 
@@ -203,7 +204,7 @@ def get_categorize_sensor_values(two_Dim_sensor_data):
     categorized_data = []
     for i in range(len(two_Dim_sensor_data)):
         categorized_i_data = []
-        for j in range(len(two_Dim_sensor_data)):
+        for j in range(len(two_Dim_sensor_data[i])):
             if (two_Dim_sensor_data[i][j] >= -10000) and (two_Dim_sensor_data[i][j] <= -10):
                 categorized_i_data.append(3)
             elif two_Dim_sensor_data[i][j] <= 50:
@@ -232,3 +233,57 @@ def categorize_data_values(diff_array_results):
         output_location = '.\\Output Files\\Catagorized Files\\categorized_' + data_info + '.asc'
         write_asc_data_file(categorized_data, output_location)
     return categorized_data_results
+
+
+def accumulate_iteration_values(iter_dict):
+    """
+    returns the dict of list of accumulated data till the last date available
+    """
+    accumulated_iterations = {}
+    _iter_dict_keys = list(iter_dict.keys())
+    while len(_iter_dict_keys) != 0:
+        # print("accumulation_from_" + _iter_dict_keys[0][24:])  # len("accumulation_from_")==24
+        items_to_accumulate = [np.array((iter_dict[key])) for key in _iter_dict_keys]
+        # for i in items_to_accumulate:
+        #     print(type(i))
+        # print(sum(items_to_accumulate).tolist())
+        # print(type(abc), type(items_to_accumulate[0][0][0]))
+        accumulated_iterations["accumulation_from_" + _iter_dict_keys[0][24:]] = sum(items_to_accumulate).tolist()
+        _iter_dict_keys.pop(0)
+    return accumulated_iterations
+
+
+def normalize_accululated_data(accumulated_lookup):
+    """
+    returns the dict with data normalized with the total accumulation
+    """
+    normalized_accululated_dict = {"normalized_" + key: (np.array(value) * 100 /
+                                                        (len(accumulated_lookup) + 1 - int(key[22:]))).tolist()
+                                   for key, value in accumulated_lookup.items()}  # len("accumulation_from_iter") = 22
+    return normalized_accululated_dict
+
+
+def categorize_normalized_acc_data(normalized_accumulated_dict):
+    """catagorizes data on the basis of Normalized_Categorization file in the root location and returns the same"""
+    categorized_data_dict = []
+    pass
+
+    # with open("Normalized_Categorization.json") as json_file:
+    #     categories = json.load(json_file)
+    #     return categories
+
+        # for i in range(len(two_Dim_sensor_data)):
+        #     categorized_i_data = []
+        #     for j in range(len(two_Dim_sensor_data[i])):
+        #         if (two_Dim_sensor_data[i][j] >= -10000) and (two_Dim_sensor_data[i][j] <= -10):
+        #             categorized_i_data.append(3)
+        #         elif two_Dim_sensor_data[i][j] <= 50:
+        #             categorized_i_data.append(0)
+        #         elif two_Dim_sensor_data[i][j] <= 100:
+        #             categorized_i_data.append(1)
+        #         elif two_Dim_sensor_data[i][j] <= 10000:
+        #             categorized_i_data.append(3)
+        #         else:
+        #             categorized_i_data.append(None)
+        #     categorized_data.append(categorized_i_data)
+        # return categorized_data

@@ -42,6 +42,15 @@ while True:
 
             running_averages_categorized = categorize_data_values(running_averages)
             pprint(running_averages_categorized.keys())
+            # pprint(len(running_averages_categorized))
+
+            accumulated_data_lookup = accumulate_iteration_values(running_averages_categorized)
+            pprint(accumulated_data_lookup.keys())
+
+            normalized_accumulated_lookup = normalize_accululated_data(accumulated_data_lookup)
+            # pprint(normalized_accumulated_lookup)
+
+            categorize_normalized_acc_data(normalized_accumulated_lookup)
 
         else:
             print("WARNING ::: No asc data files found!!!!!")
