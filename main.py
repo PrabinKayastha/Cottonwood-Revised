@@ -48,9 +48,10 @@ while True:
             pprint(accumulated_data_lookup.keys())
 
             normalized_accumulated_lookup = normalize_accululated_data(accumulated_data_lookup)
-            # pprint(normalized_accumulated_lookup)
+            pprint(normalized_accumulated_lookup.keys())
 
-            categorize_normalized_acc_data(normalized_accumulated_lookup)
+            categorized_normalized_acc_data = categorize_normalized_acc_data(normalized_accumulated_lookup)
+            pprint(categorized_normalized_acc_data.keys())
 
         else:
             print("WARNING ::: No asc data files found!!!!!")

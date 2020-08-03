@@ -5,6 +5,8 @@ import json
 import numpy as np
 from colorama import Fore
 import re
+from ast import literal_eval as make_tuple
+
 
 from AscData import AscData
 # from pprint import pprint
@@ -257,33 +259,29 @@ def normalize_accululated_data(accumulated_lookup):
     """
     returns the dict with data normalized with the total accumulation
     """
-    normalized_accululated_dict = {"normalized_" + key: (np.array(value) * 100 /
+    normalized_accumulated_dict = {"normalized_" + key: (np.array(value) * 100 /
                                                         (len(accumulated_lookup) + 1 - int(key[22:]))).tolist()
                                    for key, value in accumulated_lookup.items()}  # len("accumulation_from_iter") = 22
-    return normalized_accululated_dict
+    return normalized_accumulated_dict
 
 
 def categorize_normalized_acc_data(normalized_accumulated_dict):
-    """catagorizes data on the basis of Normalized_Categorization file in the root location and returns the same"""
-    categorized_data_dict = []
-    pass
+    """Categorize data on the basis of Normalized_Categorization file in the root location and returns the same"""
+    _normalized_accumulated_dict = normalized_accumulated_dict
+    categorized_normalized_accumulated_dict = {}
 
-    # with open("Normalized_Categorization.json") as json_file:
-    #     categories = json.load(json_file)
-    #     return categories
+    with open("Normalized_Categorization.json") as json_file:
+        categories = json.load(json_file)
+        # print(type(categories))
 
-        # for i in range(len(two_Dim_sensor_data)):
-        #     categorized_i_data = []
-        #     for j in range(len(two_Dim_sensor_data[i])):
-        #         if (two_Dim_sensor_data[i][j] >= -10000) and (two_Dim_sensor_data[i][j] <= -10):
-        #             categorized_i_data.append(3)
-        #         elif two_Dim_sensor_data[i][j] <= 50:
-        #             categorized_i_data.append(0)
-        #         elif two_Dim_sensor_data[i][j] <= 100:
-        #             categorized_i_data.append(1)
-        #         elif two_Dim_sensor_data[i][j] <= 10000:
-        #             categorized_i_data.append(3)
-        #         else:
-        #             categorized_i_data.append(None)
-        #     categorized_data.append(categorized_i_data)
-        # return categorized_data
+        for key, value in normalized_accumulated_dict.items():
+            for i in range(len(value)):
+                for j in range(len(value[i])):
+                    for label, limit in categories.items():
+                        _label = float(label)
+                        _limit = make_tuple(limit)
+                        if float(_limit[0]) < value[i][j] <= float(_limit[1]):
+                            _normalized_accumulated_dict[key][i][j] = _label
+                            break
+            categorized_normalized_accumulated_dict["categorized_" + key] = _normalized_accumulated_dict[key]
+    return categorized_normalized_accumulated_dict
