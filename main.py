@@ -13,23 +13,23 @@ while True:
     if path:
         all_asc_file_paths = get_list_of_asc_input_file_paths(path)
         # Evaluate input asc data
-        all_data_file_paths = [file for file in all_asc_file_paths if "topo.asc" not in file]
+        all_data_file_paths = [file for file in all_asc_file_paths if "topo.asc" not in file and "hbfl" not in file]
         if all_data_file_paths:
             print(str(len(all_data_file_paths)) + " data files found!!!")
 
             # Maintain lookup for filename and file path
             data_file_location_lookup = {extract_filename_from_filepath(file_path): file_path for file_path in
                                          all_data_file_paths}
-            # pprint(data_file_location_lookup)
+            pprint(data_file_location_lookup)
 
             # Maintain lookup for file name and AscData objects
             data_file_objects_lookup = {extract_filename_from_filepath(file_path): create_asc_data_obj(file_path)
                                         for file_path in all_data_file_paths}
-            # pprint(data_file_objects_lookup)
+            pprint(data_file_objects_lookup.keys())
 
             # Maintain lookup for filename and AscData objects
             topo_adjusted_data_lookup = bulk_fetch_topo_adjusted_data(data_file_objects_lookup)
-            # pprint(topo_adjusted_data_lookup)
+            pprint(topo_adjusted_data_lookup.keys())
 
             # Export the adjusted data for future reference
             export_topo_adjusted_data(topo_adjusted_data_lookup)
@@ -52,6 +52,15 @@ while True:
 
             categorized_normalized_acc_data = categorize_normalized_acc_data(normalized_accumulated_lookup)
             pprint(categorized_normalized_acc_data.keys())
+
+            pprint(data_file_objects_lookup["wd_day1.asc"].hbfl_file_metadata)
+            hbfl_topo_adjusted_data_lookup = bulk_fetch_hbfl_adjusted_data(topo_adjusted_data_lookup,
+                                                                           data_file_objects_lookup)
+            pprint(categorized_normalized_acc_data.keys())
+
+            export_hbfl_adjusted_data(hbfl_topo_adjusted_data_lookup)
+
+
 
         else:
             print("WARNING ::: No asc data files found!!!!!")

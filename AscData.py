@@ -18,15 +18,36 @@ class AscData:
         topo_file_metadata[__file_row_size[0]] = __file_row_size[1]
         __file_xllcorner_details = tuple(filter(None, next(lines)))
         topo_file_metadata[__file_xllcorner_details[0]] = __file_xllcorner_details[1]
-        __file_cell_size_details = tuple(filter(None, next(lines)))
-        topo_file_metadata[__file_cell_size_details[0]] = __file_cell_size_details[1]
         __file_yllcorner_details = tuple(filter(None, next(lines)))
         topo_file_metadata[__file_yllcorner_details[0]] = __file_yllcorner_details[1]
+        __file_cell_size_details = tuple(filter(None, next(lines)))
+        topo_file_metadata[__file_cell_size_details[0]] = __file_cell_size_details[1]
         __file_NODATA_value = tuple(filter(None, next(lines)))
         topo_file_metadata[__file_NODATA_value[0]] = __file_NODATA_value[1]
 
         """Data content of the topo file."""
         topo_data = list(lines)
+
+    hbfl_file_path = r".\Input Files\hbfl2017.asc"  # hbfl file relative file path
+    hbfl_file_metadata = {}
+    with open(hbfl_file_path, "r") as file:
+        lines = csv.reader(file, delimiter=" ")
+        """extract the metadata of the hbfl file from the first six rows."""
+        __file_col_size = tuple(filter(None, next(lines)))
+        hbfl_file_metadata[__file_col_size[0]] = __file_col_size[1]
+        __file_row_size = tuple(filter(None, next(lines)))
+        hbfl_file_metadata[__file_row_size[0]] = __file_row_size[1]
+        __file_xllcorner_details = tuple(filter(None, next(lines)))
+        hbfl_file_metadata[__file_xllcorner_details[0]] = __file_xllcorner_details[1]
+        __file_yllcorner_details = tuple(filter(None, next(lines)))
+        hbfl_file_metadata[__file_yllcorner_details[0]] = __file_yllcorner_details[1]
+        __file_cell_size_details = tuple(filter(None, next(lines)))
+        hbfl_file_metadata[__file_cell_size_details[0]] = __file_cell_size_details[1]
+        __file_NODATA_value = tuple(filter(None, next(lines)))
+        hbfl_file_metadata[__file_NODATA_value[0]] = __file_NODATA_value[1]
+
+        """Data content of the hbfl file."""
+        hbfl_data = list(lines)
 
     def __init__(self, file_path):
         self.file_path = file_path
@@ -41,10 +62,10 @@ class AscData:
             self.file_metadata[__file_row_size[0]] = __file_row_size[1]
             __file_xllcorner_details = tuple(filter(None, next(lines)))
             self.file_metadata[__file_xllcorner_details[0]] = __file_xllcorner_details[1]
-            __file_cell_size_details = tuple(filter(None, next(lines)))
-            self.file_metadata[__file_cell_size_details[0]] = __file_cell_size_details[1]
             __file_yllcorner_details = tuple(filter(None, next(lines)))
             self.file_metadata[__file_yllcorner_details[0]] = __file_yllcorner_details[1]
+            __file_cell_size_details = tuple(filter(None, next(lines)))
+            self.file_metadata[__file_cell_size_details[0]] = __file_cell_size_details[1]
             __file_NODATA_value = tuple(filter(None, next(lines)))
             self.file_metadata[__file_NODATA_value[0]] = __file_NODATA_value[1]
 

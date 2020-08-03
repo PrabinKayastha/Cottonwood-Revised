@@ -11,6 +11,8 @@ Output Files/*
 !Output Files/Difference Results/.gitkeep
 !Output Files/Running Averages/.gitkeep
 !Output Files/Catagorized Files/.gitkeep
+!Output Files/Hbfl Adjusted Files/.gitkeep
+
 
 #Exclude everything
 Input Files/

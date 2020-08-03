@@ -285,3 +285,34 @@ def categorize_normalized_acc_data(normalized_accumulated_dict):
                             break
             categorized_normalized_accumulated_dict["categorized_" + key] = _normalized_accumulated_dict[key]
     return categorized_normalized_accumulated_dict
+
+
+def bulk_fetch_hbfl_adjusted_data(topo_adjusted_data_dict, data_file_objects_dict):
+    """
+        Returns a dictionary of .asc filename and its corresponding AscData type object.
+        Adjusts the data values in object of type AscData class with the topo.asc data.
+        param data_file_objects_lookup: Root folder location for the input files.
+        return: Dictionary of .asc filename and its corresponding topo adjusted data.
+    """
+    hbfl_topo_adjusted_data_files_dict = {}
+    for data_file, data_file_object in topo_adjusted_data_dict.items():
+        # print(data_file_objects_dict[data_file].hbfl_data)
+        adjusted_data = []
+        for i in range(int(data_file_objects_dict[data_file].hbfl_file_metadata["nrows"])):
+            adj_rows_vals = []
+            for j in range(int(data_file_objects_dict[data_file].hbfl_file_metadata["ncols"])):
+                adj_rows_vals.append(float(data_file_object[i][j]) - float(data_file_objects_dict[data_file].hbfl_data[i][j]))
+            adjusted_data.append(adj_rows_vals)
+        hbfl_topo_adjusted_data_files_dict["hbfl_" + data_file] = adjusted_data
+    return hbfl_topo_adjusted_data_files_dict
+
+
+def export_hbfl_adjusted_data(hbfl_adjusted_data_dict):
+    """
+    Writes adjusted data into a output file location.
+    param hbfl_adjusted_data_dict: lookup with the asc filename and its data.
+    """
+    for data_file_name, topo_adjusted_data in hbfl_adjusted_data_dict.items():
+        adjusted_output_location = "./Output Files/Hbfl Adjusted Files/" + data_file_name
+        write_asc_data_file(topo_adjusted_data, adjusted_output_location)
+    print("The hbfl adjusted output can be found at './Output Files/Hbfl Adjusted Files/' in the project root folder.")
