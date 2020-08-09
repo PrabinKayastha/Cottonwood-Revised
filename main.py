@@ -13,7 +13,8 @@ while True:
     if path:
         all_asc_file_paths = get_list_of_asc_input_file_paths(path)
         # Evaluate input asc data
-        all_data_file_paths = [file for file in all_asc_file_paths if "topo.asc" not in file and "hbfl" not in file]
+        all_data_file_paths = [file for file in all_asc_file_paths if "topo.asc" not in file and "hbfl" not in file
+                               and "ss" not in file]
         if all_data_file_paths:
             print(str(len(all_data_file_paths)) + " data files found!!!")
 

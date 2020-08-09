@@ -270,7 +270,7 @@ def categorize_normalized_acc_data(normalized_accumulated_dict):
     _normalized_accumulated_dict = normalized_accumulated_dict
     categorized_normalized_accumulated_dict = {}
 
-    with open("Normalized_Categorization.json") as json_file:
+    with open("Categorization Files/Normalized_Categorization.json") as json_file:
         categories = json.load(json_file)
         # print(type(categories))
 
