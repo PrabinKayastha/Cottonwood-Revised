@@ -266,13 +266,15 @@ def normalize_accululated_data(accumulated_lookup):
 
 
 def categorize_normalized_acc_data(normalized_accumulated_dict):
-    """Categorize data on the basis of Normalized_Categorization file in the root location and returns the same"""
+    """Categorize data on the basis of Normalized_Categorization file in the Categorization folder at root location
+    and returns the same"""
     _normalized_accumulated_dict = normalized_accumulated_dict
     categorized_normalized_accumulated_dict = {}
 
     with open("Categorization Files/Normalized_Categorization.json") as json_file:
         categories = json.load(json_file)
         # print(type(categories))
+        # print(categories)
 
         for key, value in normalized_accumulated_dict.items():
             for i in range(len(value)):
@@ -281,7 +283,7 @@ def categorize_normalized_acc_data(normalized_accumulated_dict):
                         _label = float(label)
                         _limit = make_tuple(limit)
                         if float(_limit[0]) < value[i][j] <= float(_limit[1]):
-                            _normalized_accumulated_dict[key][i][j] = _label
+                            _normalized_accumulated_dict[key][i][j] = _limit[2]
                             break
             categorized_normalized_accumulated_dict["categorized_" + key] = _normalized_accumulated_dict[key]
     return categorized_normalized_accumulated_dict
@@ -307,12 +309,120 @@ def bulk_fetch_hbfl_adjusted_data(topo_adjusted_data_dict, data_file_objects_dic
     return hbfl_topo_adjusted_data_files_dict
 
 
-def export_hbfl_adjusted_data(hbfl_adjusted_data_dict):
+def categorize_with_hbfl_data(hbfl_topo_adjusted_data_dict):
+    """Categorize data on the basis of hbfl_Categorization file in the Categorization folder at root location
+    and returns the same"""
+    _hbfl_topo_adjusted_data_dict = hbfl_topo_adjusted_data_dict
+    hbfl_categorized_data = {}
+
+    with open("Categorization Files/hbfl_Categorization.json") as json_file:
+        categories = json.load(json_file)
+        # print(type(categories))
+        # print(categories)
+
+        for key, value in hbfl_topo_adjusted_data_dict.items():
+            for i in range(len(value)):
+                for j in range(len(value[i])):
+                    for label, limit in categories.items():
+                        _label = float(label)
+                        _limit = make_tuple(limit)
+                        if float(_limit[0]) < value[i][j] <= float(_limit[1]):
+                            _hbfl_topo_adjusted_data_dict[key][i][j] = _limit[2]
+                            break
+            hbfl_categorized_data["classified_" + key] = _hbfl_topo_adjusted_data_dict[key]
+    return hbfl_categorized_data
+
+
+def export_hbfl_categorized_data(hbfl_adjusted_data_dict):
     """
     Writes adjusted data into a output file location.
     param hbfl_adjusted_data_dict: lookup with the asc filename and its data.
     """
     for data_file_name, topo_adjusted_data in hbfl_adjusted_data_dict.items():
-        adjusted_output_location = "./Output Files/Hbfl Adjusted Files/" + data_file_name
+        adjusted_output_location = "./Output Files/Hbfl Categorized Files/" + data_file_name + ".asc"
         write_asc_data_file(topo_adjusted_data, adjusted_output_location)
-    print("The hbfl adjusted output can be found at './Output Files/Hbfl Adjusted Files/' in the project root folder.")
+    print("The hbfl adjusted output can be found at './Output Files/Hbfl Categorized Files/' in the project root folder.")
+
+
+def shear_stress_file():
+    shear_stress_file_path = r"./Input Files/ss2017.asc"
+    shear_stress_file_metadata = {}
+
+    with open("Categorization Files/Shear_Stress_Categorization.json") as json_file:
+        categories = json.load(json_file)
+        # print(type(categories))
+        # print(categories)
+
+    with open(shear_stress_file_path, "r") as file:
+        lines = csv.reader(file, delimiter=" ")
+        """extract the metadata of the hbfl file from the first six rows."""
+        __file_col_size = tuple(filter(None, next(lines)))
+        shear_stress_file_metadata[__file_col_size[0]] = __file_col_size[1]
+        __file_row_size = tuple(filter(None, next(lines)))
+        shear_stress_file_metadata[__file_row_size[0]] = __file_row_size[1]
+        __file_xllcorner_details = tuple(filter(None, next(lines)))
+        shear_stress_file_metadata[__file_xllcorner_details[0]] = __file_xllcorner_details[1]
+        __file_yllcorner_details = tuple(filter(None, next(lines)))
+        shear_stress_file_metadata[__file_yllcorner_details[0]] = __file_yllcorner_details[1]
+        __file_cell_size_details = tuple(filter(None, next(lines)))
+        shear_stress_file_metadata[__file_cell_size_details[0]] = __file_cell_size_details[1]
+        __file_NODATA_value = tuple(filter(None, next(lines)))
+        shear_stress_file_metadata[__file_NODATA_value[0]] = __file_NODATA_value[1]
+
+        """Data content of the hbfl file."""
+        shear_stress_file_metadata["shear_stress_data"] = list(lines)
+
+        for arr in shear_stress_file_metadata["shear_stress_data"]:
+            arr.pop()
+
+        _shear_stress_data = shear_stress_file_metadata["shear_stress_data"]
+
+        for i in range(len(shear_stress_file_metadata["ncols"])):
+            for j in range(len(shear_stress_file_metadata["nrows"])):
+                for label, limit in categories.items():
+                    _label = float(label)
+                    _limit = make_tuple(limit)
+                    if float(_limit[0]) < float(shear_stress_file_metadata["shear_stress_data"][i][j]) <= float(_limit[1]):
+                        _shear_stress_data[i][j] = float(_limit[2])
+                        break
+        shear_stress_file_metadata["shear_stress_classified_data"] = _shear_stress_data
+        return shear_stress_file_metadata
+
+
+def calc_final_val(matrix1, matrix2, matrix3):
+    return np.multiply(np.array(matrix1), np.array(matrix2), np.array(matrix3))
+
+
+def categorize_with_cottonwood(cottonwood_data_dict):
+    """Categorize data on the basis of Cottonwood_Categorization file in the Categorization folder at root location
+    and returns the same"""
+    _cottonwood_data_dict = cottonwood_data_dict
+    cottonwood_categorized_data = {}
+
+    with open("Categorization Files/Cottonwood_Categorization.json") as json_file:
+        categories = json.load(json_file)
+        # print(type(categories))
+        # print(categories)
+
+        for key, value in cottonwood_data_dict.items():
+            for i in range(len(value)):
+                for j in range(len(value[i])):
+                    for label, limit in categories.items():
+                        _label = float(label)
+                        _limit = make_tuple(limit)
+                        if float(_limit[0]) < float(value[i][j]) <= float(_limit[1]):
+                            _cottonwood_data_dict[key][i][j] = _limit[2]
+                            break
+            cottonwood_categorized_data["classified_" + key] = _cottonwood_data_dict[key]
+    return cottonwood_categorized_data
+
+
+def export_cottonwood_categorized_data(categorized_cottonwood_data_dict):
+    """
+    Writes adjusted data into a output file location.
+    param categorized_cottonwood_data_dict: lookup with the asc filename and its data.
+    """
+    for data_file_name, cottonwood_data in categorized_cottonwood_data_dict.items():
+        adjusted_output_location = "./Output Files/Cottonwood Categorized Files/" + data_file_name + ".asc"
+        write_asc_data_file(cottonwood_data, adjusted_output_location)
+    print("The hbfl adjusted output can be found at './Output Files/Cottonwood Categorized Files/' in the project root folder.")

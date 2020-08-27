@@ -1,6 +1,8 @@
 from UtilityFunctions import *
 from colorama import Fore
 from pprint import pprint
+import numpy as np
+
 
 all_asc_files = []
 data_file_location_lookup = {}  # stores datafile names and its file location
@@ -21,47 +23,65 @@ while True:
             # Maintain lookup for filename and file path
             data_file_location_lookup = {extract_filename_from_filepath(file_path): file_path for file_path in
                                          all_data_file_paths}
-            pprint(data_file_location_lookup)
+            # pprint(data_file_location_lookup)
 
             # Maintain lookup for file name and AscData objects
             data_file_objects_lookup = {extract_filename_from_filepath(file_path): create_asc_data_obj(file_path)
                                         for file_path in all_data_file_paths}
-            pprint(data_file_objects_lookup.keys())
+            # pprint(data_file_objects_lookup.keys())
 
             # Maintain lookup for filename and AscData objects
             topo_adjusted_data_lookup = bulk_fetch_topo_adjusted_data(data_file_objects_lookup)
-            pprint(topo_adjusted_data_lookup.keys())
+            # pprint(topo_adjusted_data_lookup.keys())
 
             # Export the adjusted data for future reference
             export_topo_adjusted_data(topo_adjusted_data_lookup)
 
             days_difference_lookup = calc_bulk_asc_data_difference(topo_adjusted_data_lookup)
-            pprint(days_difference_lookup.keys())
+            # pprint(days_difference_lookup.keys())
 
             running_averages = calc_topo_adj_asc_running_avg(days_difference_lookup)
-            pprint(running_averages.keys())
+            # pprint(running_averages.keys())
 
             running_averages_categorized = categorize_data_values(running_averages)
-            pprint(running_averages_categorized.keys())
+            # pprint(running_averages_categorized.keys())
             # pprint(len(running_averages_categorized))
 
             accumulated_data_lookup = accumulate_iteration_values(running_averages_categorized)
-            pprint(accumulated_data_lookup.keys())
+            # pprint(accumulated_data_lookup.keys())
 
             normalized_accumulated_lookup = normalize_accululated_data(accumulated_data_lookup)
-            pprint(normalized_accumulated_lookup.keys())
+            # pprint(normalized_accumulated_lookup.keys())
 
             categorized_normalized_acc_data = categorize_normalized_acc_data(normalized_accumulated_lookup)
-            pprint(categorized_normalized_acc_data.keys())
+            # pprint(categorized_normalized_acc_data.keys())
 
-            pprint(data_file_objects_lookup["wd_day1.asc"].hbfl_file_metadata)
+            # pprint(data_file_objects_lookup["wd_day1.asc"].hbfl_file_metadata)
             hbfl_topo_adjusted_data_lookup = bulk_fetch_hbfl_adjusted_data(topo_adjusted_data_lookup,
                                                                            data_file_objects_lookup)
-            pprint(categorized_normalized_acc_data.keys())
 
-            export_hbfl_adjusted_data(hbfl_topo_adjusted_data_lookup)
+            hbfl_categorized_data_lookup = categorize_with_hbfl_data(hbfl_topo_adjusted_data_lookup)
 
+            export_hbfl_categorized_data(hbfl_categorized_data_lookup)
 
+            shear_stress_classified = shear_stress_file()
+            # print(len(shear_stress_classified), len(shear_stress_classified[0]))
+
+            # pprint(list(categorized_normalized_acc_data.keys()))
+            # pprint(list(hbfl_categorized_data_lookup.keys()))
+
+            cottonwood_lookup = {}
+
+            for key, value in categorized_normalized_acc_data.items():
+                cottonwood_lookup[key.replace('categorized_normalized_accumulation_from_iter', 'cottonwood_data_iter')] =\
+                    calc_final_val(value, hbfl_categorized_data_lookup[key.replace('categorized_normalized_accumulation_from_iter', 'classified_hbfl_wd_day') + '.asc']
+                                   , shear_stress_classified["shear_stress_data"])
+            # pprint(cottonwood_lookup.keys())
+
+            categorized_cottonwood_lookup = categorize_with_cottonwood(cottonwood_lookup)
+            # pprint(categorized_cottonwood_lookup.keys())
+
+            export_cottonwood_categorized_data(categorized_cottonwood_lookup)
 
         else:
             print("WARNING ::: No asc data files found!!!!!")
