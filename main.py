@@ -1,7 +1,6 @@
 from UtilityFunctions import *
 from colorama import Fore
 from pprint import pprint
-import numpy as np
 
 
 all_asc_files = []
@@ -65,7 +64,6 @@ while True:
             export_hbfl_categorized_data(hbfl_categorized_data_lookup)
 
             shear_stress_classified = shear_stress_file()
-            # print(len(shear_stress_classified), len(shear_stress_classified[0]))
 
             # pprint(list(categorized_normalized_acc_data.keys()))
             # pprint(list(hbfl_categorized_data_lookup.keys()))
@@ -82,6 +80,11 @@ while True:
             # pprint(categorized_cottonwood_lookup.keys())
 
             export_cottonwood_categorized_data(categorized_cottonwood_lookup)
+
+            export_max_cottonwood_value(list(categorized_cottonwood_lookup.values()))
+
+            export_mean_cottonwood_value(list(categorized_cottonwood_lookup.values()))
+
 
         else:
             print("WARNING ::: No asc data files found!!!!!")

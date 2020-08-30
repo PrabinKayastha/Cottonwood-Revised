@@ -339,7 +339,7 @@ def export_hbfl_categorized_data(hbfl_adjusted_data_dict):
     param hbfl_adjusted_data_dict: lookup with the asc filename and its data.
     """
     for data_file_name, topo_adjusted_data in hbfl_adjusted_data_dict.items():
-        adjusted_output_location = "./Output Files/Hbfl Categorized Files/" + data_file_name + ".asc"
+        adjusted_output_location = "./Output Files/Hbfl Categorized Files/" + data_file_name
         write_asc_data_file(topo_adjusted_data, adjusted_output_location)
     print("The hbfl adjusted output can be found at './Output Files/Hbfl Categorized Files/' in the project root folder.")
 
@@ -411,7 +411,10 @@ def categorize_with_cottonwood(cottonwood_data_dict):
                         _label = float(label)
                         _limit = make_tuple(limit)
                         if float(_limit[0]) < float(value[i][j]) <= float(_limit[1]):
-                            _cottonwood_data_dict[key][i][j] = _limit[2]
+                            _cottonwood_data_dict[key][i][j] = float(_limit[2])
+                            break
+                        else:
+                            _cottonwood_data_dict[key][i][j] = float(value[i][j])
                             break
             cottonwood_categorized_data["classified_" + key] = _cottonwood_data_dict[key]
     return cottonwood_categorized_data
@@ -425,4 +428,32 @@ def export_cottonwood_categorized_data(categorized_cottonwood_data_dict):
     for data_file_name, cottonwood_data in categorized_cottonwood_data_dict.items():
         adjusted_output_location = "./Output Files/Cottonwood Categorized Files/" + data_file_name + ".asc"
         write_asc_data_file(cottonwood_data, adjusted_output_location)
-    print("The hbfl adjusted output can be found at './Output Files/Cottonwood Categorized Files/' in the project root folder.")
+    print("The cottonwood adjusted output can be found at './Output Files/Cottonwood Categorized Files/' "
+          "in the project root folder.")
+
+
+def export_max_cottonwood_value(categorized_cottonwood_data_list):
+    """
+    Returns and exports the position wise maximum value in each cell of the asc data matrix among the array of supplied metrics.
+    param categorized_cottonwood_data_dict: lookup with the asc filename and its data.
+    """
+
+    categorized_cottonwood_float_list = [np.array(i).astype(float) for i in categorized_cottonwood_data_list]
+    cellwise_max_data = np.maximum.reduce(categorized_cottonwood_float_list)
+    max_value_output_location = "./Output Files/Cottonwood Files/cottonwood_max.asc"
+    write_asc_data_file(cellwise_max_data, max_value_output_location)
+    return cellwise_max_data
+
+
+def export_mean_cottonwood_value(categorized_cottonwood_data_list):
+    """
+    Returns and exports the position wise mean value in each cell of the asc data matrix among the array of supplied metrics.
+    param categorized_cottonwood_data_dict: lookup with the asc filename and its data.
+    """
+
+    categorized_cottonwood_float_list = [np.array(i).astype(float) for i in categorized_cottonwood_data_list]
+    cellwise_avg_data = np.mean(categorized_cottonwood_float_list,axis=0)
+    cellwise_avg_data_value_output_location = "./Output Files/Cottonwood Files/cottonwood_avg.asc"
+    write_asc_data_file(cellwise_avg_data, cellwise_avg_data_value_output_location)
+    return cellwise_avg_data
+

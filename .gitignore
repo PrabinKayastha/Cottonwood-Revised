@@ -12,6 +12,9 @@ Output Files/*
 !Output Files/Running Averages/.gitkeep
 !Output Files/Catagorized Files/.gitkeep
 !Output Files/Hbfl Categorized Files/.gitkeep
+!Output Files/Cottonwood Files/.gitkeep
+!Output Files/Cottonwood Categorized Files/.gitkeep
+
 
 
 #Exclude everything
